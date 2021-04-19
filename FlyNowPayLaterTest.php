@@ -1,30 +1,30 @@
 <?php
 
 /**
- * -----------------------------------------------------------------------------
- *
- * Fly Now Pay Later PHP developer homework assignement.
- *
- * In order to complete the homework assignement please follow these steps:
- *
- * TASKS:
- *
- * 1. Create a new Laravel project
- * 2. Setup the project as ready for development
- * 3. Add this file to `tests/Feature` folder
- * 4. Execute `php artisan test`
- * 5. Once the command returns that all tests are passed you may submit a link
- * to the public git repository where we can review your codebase.
- *
- * RULES:
- *
- * 1. It is not allowed to make any changes to this TEST file.
- * 2. You must use Laravel 7 or newer
- * 3. You must use PHP 7.3 or newer
- * 4. You must use MySQL 5.7
- * 5. You must follow the PSR-2 standards
- *
- * -----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+
+Fly Now Pay Later PHP developer homework assignement.
+
+  In order to complete the homework assignement please follow these steps:
+
+TASKS:
+
+  1. Create a new Laravel project
+  2. Setup the project as ready for development
+  3. Add this file to `tests/Feature` folder
+  4. Execute `php artisan test`
+  5. Once the command returns that all tests are passed you may submit a link
+  to the public git repository where we can review your codebase.
+
+RULES:
+
+  1. It is not allowed to make any changes to this TEST file.
+  2. You must use Laravel 7 or newer
+  3. You must use PHP 7.3 or newer
+  4. You must use MySQL 5.7
+  5. You must follow the PSR-2 standards
+
+-----------------------------------------------------------------------------
  **/
 
 namespace Tests\Feature;
