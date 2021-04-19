@@ -1,31 +1,31 @@
 <?php
 
 /**
------------------------------------------------------------------------------
-
-Fly Now Pay Later PHP developer homework assignement.
-
-  In order to complete the homework assignement please follow these steps:
-
-TASKS:
-
-  1. Create a new Laravel project
-  2. Setup the project as ready for development
-  3. Add this file to `tests/Feature` folder
-  4. Execute `php artisan test`
-  5. Once the command returns that all tests are passed you may submit a link
-  to the public git repository where we can review your codebase.
-
-RULES:
-
-  1. It is not allowed to make any changes to this TEST file.
-  2. You must use Laravel 7 or newer
-  3. You must use PHP 7.3 or newer
-  4. You must use MySQL 5.7
-  5. You must follow the PSR-2 standards
-
------------------------------------------------------------------------------
-**/
+ * -----------------------------------------------------------------------------
+ *
+ * Fly Now Pay Later PHP developer homework assignement.
+ *
+ * In order to complete the homework assignement please follow these steps:
+ *
+ * TASKS:
+ *
+ * 1. Create a new Laravel project
+ * 2. Setup the project as ready for development
+ * 3. Add this file to `tests/Feature` folder
+ * 4. Execute `php artisan test`
+ * 5. Once the command returns that all tests are passed you may submit a link
+ * to the public git repository where we can review your codebase.
+ *
+ * RULES:
+ *
+ * 1. It is not allowed to make any changes to this TEST file.
+ * 2. You must use Laravel 7 or newer
+ * 3. You must use PHP 7.3 or newer
+ * 4. You must use MySQL 5.7
+ * 5. You must follow the PSR-2 standards
+ *
+ * -----------------------------------------------------------------------------
+ **/
 
 namespace Tests\Feature;
 
@@ -82,39 +82,39 @@ class FlyNowPayLaterTest extends TestCase
     {
         parent::setUp();
 
-        $this->accessKey = config('services.my-api.access-key');
+        $this->accessKey    = config('services.my-api.access-key');
         $this->accessSecret = config('services.my-api.access-secret');
 
         $this->newFlightRecordContext = [
             'from' => [
                 'date' => now()->addWeek()->format('Y-m-d'),
             ],
-            'to' => [
+            'to'   => [
                 'date' => now()->addWeek()->addDay()->format('Y-m-d'),
             ],
-            'leg' => [
+            'leg'  => [
                 [
-                    'iata' => 'LGW',
+                    'iata'  => 'LGW',
                     'order' => 1,
                 ],
                 [
-                    'iata' => 'IST',
+                    'iata'  => 'IST',
                     'order' => 2,
                 ],
                 [
-                    'iata' => 'SVO',
+                    'iata'  => 'SVO',
                     'order' => 3,
                 ],
                 [
-                    'iata' => 'SGN',
+                    'iata'  => 'SGN',
                     'order' => 4,
                 ],
             ],
         ];
 
         $this->newPassengerRecordContext = [
-            'firstName' => $this->faker->firstName,
-            'lastName' => $this->faker->lastName,
+            'firstName'   => $this->faker->firstName,
+            'lastName'    => $this->faker->lastName,
             'dateOfBirth' => $this->faker->dateTimeBetween('-70 years', '-16 years')->format('Y-m-d'),
         ];
     }
@@ -133,7 +133,7 @@ class FlyNowPayLaterTest extends TestCase
     public function testAuthenticationSuccess(): void
     {
         $response = $this->post('authorise', [
-            'key' => $this->accessKey,
+            'key'    => $this->accessKey,
             'secret' => $this->accessSecret,
         ]);
 
@@ -178,11 +178,11 @@ class FlyNowPayLaterTest extends TestCase
     public function testCreateFlightSuccess(): void
     {
         $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'flightRecordId',
-            ])
-            ->json('flightRecordId');
+                               ->assertStatus(Response::HTTP_OK)
+                               ->assertJsonStructure([
+                                   'flightRecordId',
+                               ])
+                               ->json('flightRecordId');
 
         $this->assertNotEmpty($flightRecordId);
         $this->assertIsString($flightRecordId);
@@ -191,19 +191,19 @@ class FlyNowPayLaterTest extends TestCase
     public function testCreateFlightErrorAtMissingToken(): void
     {
         $this->post('flight', $this->newFlightRecordContext)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testCreateFlightErrorAtEmptyToken(): void
     {
         $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader(true))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testCreateFlightErrorAtInvalidFromDate(): void
@@ -211,10 +211,10 @@ class FlyNowPayLaterTest extends TestCase
         $this->newFlightRecordContext['from']['date'] = '0000-00-00';
 
         $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson([
-                'message' => 'Outbound date is invalid.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertExactJson([
+                 'message' => 'Outbound date is invalid.',
+             ]);
     }
 
     public function testCreateFlightErrorAtFromDate(): void
@@ -222,10 +222,10 @@ class FlyNowPayLaterTest extends TestCase
         $this->newFlightRecordContext['from']['date'] = '0000-00-00';
 
         $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson([
-                'message' => 'Outbound date cannot be in past.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertExactJson([
+                 'message' => 'Outbound date cannot be in past.',
+             ]);
     }
 
     public function testCreateFlightErrorAtToDate(): void
@@ -233,32 +233,32 @@ class FlyNowPayLaterTest extends TestCase
         $this->newFlightRecordContext['to']['date'] = now()->addWeek()->subDay()->format('Y-m-d');
 
         $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson([
-                'message' => 'Inbound date cannot be prior outbound date.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertExactJson([
+                 'message' => 'Inbound date cannot be prior outbound date.',
+             ]);
     }
 
     public function testCreateFlightErrorAtLegOrder(): void
     {
         $this->newFlightRecordContext['leg'][rand(0, count($this->newFlightRecordContext['leg']) - 1)]['order'] = 100;
         $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson([
-                'message' => 'Flight record has an error in the order index.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertExactJson([
+                 'message' => 'Flight record has an error in the order index.',
+             ]);
     }
 
     public function testCreateFlightErrorAtIataCode(): void
     {
-        $leg = rand(0, count($this->newFlightRecordContext['leg']) - 1);
+        $leg                                               = rand(0, count($this->newFlightRecordContext['leg']) - 1);
         $this->newFlightRecordContext['leg'][$leg]['iata'] .= 'X';
 
         $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson([
-                'message' => sprintf('Provided IATA code for leg index ' . $this->newFlightRecordContext['leg'][$leg]['iata'] . ' is not valid.'),
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertExactJson([
+                 'message' => sprintf('Provided IATA code for leg index '.$this->newFlightRecordContext['leg'][$leg]['iata'].' is not valid.'),
+             ]);
     }
 
     public function testGetFlightsSuccess(): void
@@ -269,124 +269,125 @@ class FlyNowPayLaterTest extends TestCase
         $this->get('flights', [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonFragment([
-                [
-                    'flightRecordId' => $flightRecordId,
-                    'title' => 'Flying from LGW to SGN',
-                    'lengthOfFlight' => '1 day',
-                    'connectingFlights' => 'Flying from LGW to IST, then to SVO and finally to SGN.',
-                    'passengers' => []
-                ]
-            ]);
+             ->assertStatus(Response::HTTP_OK)
+             ->assertJsonFragment([
+                 [
+                     'flightRecordId'    => $flightRecordId,
+                     'title'             => 'Flying from LGW to SGN',
+                     'lengthOfFlight'    => '1 day',
+                     'connectingFlights' => 'Flying from LGW to IST, then to SVO and finally to SGN.',
+                     'passengers'        => []
+                 ]
+             ]);
     }
 
     public function testGetFlightsErrorAtMissingToken(): void
     {
         $this->get('flights')
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testGetFlightSuccess(): void
     {
         $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->json('flightRecordId');
+                               ->json('flightRecordId');
 
-        $this->get('flight/' . $flightRecordId, [
+        $this->get('flight/'.$flightRecordId, [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson([
-                'flightRecordId' => $flightRecordId,
-                'title' => 'Flying from LGW to SGN',
-                'lengthOfFlight' => '1 day',
-                'connectingFlights' => 'Flying from LGW to IST, then to SVO and finally to SGN.',
-                'passengers' => [],
-            ]);
+             ->assertStatus(Response::HTTP_OK)
+             ->assertExactJson([
+                 'flightRecordId'    => $flightRecordId,
+                 'title'             => 'Flying from LGW to SGN',
+                 'lengthOfFlight'    => '1 day',
+                 'connectingFlights' => 'Flying from LGW to IST, then to SVO and finally to SGN.',
+                 'passengers'        => [],
+             ]);
     }
 
     public function testGetFlightErrorAtMissingToken(): void
     {
         $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-            ->json('flightRecordId');
+                               ->json('flightRecordId');
 
-        $this->get('flight/' . $flightRecordId)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+        $this->get('flight/'.$flightRecordId)
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testGetFlightErrorAtInvalidId(): void
     {
         $this->get('flight/hello-world', $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testCreatePassengerWithoutFlightSuccess(): void
     {
         $this->post('passenger', $this->newPassengerRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'passengerRecordId',
-            ]);
+             ->assertStatus(Response::HTTP_OK)
+             ->assertJsonStructure([
+                 'passengerRecordId',
+             ]);
     }
 
     public function testCreatePassengerWithoutFlightRecordErrorAtMissingToken(): void
     {
         $this->post('passenger', $this->newPassengerRecordContext)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testCreatePassengerWithoutFlightRecordErrorAtFirstName(): void
     {
         $this->newPassengerRecordContext['firstName'] = '¯\_(ツ)_/¯';
         $this->post('passenger', $this->newPassengerRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJsonStructure([
-                'message' => 'Passenger first name is not valid.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertJsonStructure([
+                 'message' => 'Passenger first name is not valid.',
+             ]);
     }
 
     public function testCreatePassengerWithoutFlightRecordErrorAtLastName(): void
     {
         $this->newPassengerRecordContext['lastName'] = '¯\_(ツ)_/¯';
         $this->post('passenger', $this->newPassengerRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJsonStructure([
-                'message' => 'Passenger last name is not valid.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertJsonStructure([
+                 'message' => 'Passenger last name is not valid.',
+             ]);
     }
 
     public function testCreatePassengerWithoutFlightRecordErrorAtDateOfBirth(): void
     {
         $this->newPassengerRecordContext['dateOfBirth'] = now('00:00:00')->addWeek()->format('Y-m-d');
         $this->post('passenger', $this->newPassengerRecordContext, $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJsonStructure([
-                'message' => 'Passenger date of birth cannot be in future.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertJsonStructure([
+                 'message' => 'Passenger date of birth cannot be in future.',
+             ]);
     }
 
     public function testCreatePassengerWithFlightSuccess(): void
     {
-        $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())->json('flightRecordId');
+        $flightRecordId = $this->post('flight', $this->newFlightRecordContext,
+            $this->getAuthenticationHeader())->json('flightRecordId');
 
         $this->newPassengerRecordContext['flight'] = $flightRecordId;
 
         $this->post('passenger', $this->newPassengerRecordContext, [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'passengerRecordId',
-            ]);
+             ->assertStatus(Response::HTTP_OK)
+             ->assertJsonStructure([
+                 'passengerRecordId',
+             ]);
     }
 
     public function testCreatePassengerWithFlightRecordErrorAtMissingToken(): void
@@ -397,26 +398,26 @@ class FlyNowPayLaterTest extends TestCase
         $this->newPassengerRecordContext['flight'] = $flightRecordId;
 
         $this->post('passenger', $this->newPassengerRecordContext)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testCreatePassengerWithFlightRecordErrorAtFirstName(): void
     {
         $flightRecordId = $this->post('flight', $this->newFlightRecordContext, )->json('flightRecordId');
 
-        $this->newPassengerRecordContext['flight'] = $flightRecordId;
+        $this->newPassengerRecordContext['flight']    = $flightRecordId;
         $this->newPassengerRecordContext['firstName'] = '¯\_(ツ)_/¯';
 
         $this->post('passenger', $this->newPassengerRecordContext, [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJsonStructure([
-                'message' => 'Passenger first name is not valid.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertJsonStructure([
+                 'message' => 'Passenger first name is not valid.',
+             ]);
     }
 
     public function testCreatePassengerWithFlightRecordErrorAtLastName(): void
@@ -424,16 +425,16 @@ class FlyNowPayLaterTest extends TestCase
         $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
                                ->json('flightRecordId');
 
-        $this->newPassengerRecordContext['flight'] = $flightRecordId;
+        $this->newPassengerRecordContext['flight']   = $flightRecordId;
         $this->newPassengerRecordContext['lastName'] = '¯\_(ツ)_/¯';
 
         $this->post('passenger', $this->newPassengerRecordContext, [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJsonStructure([
-                'message' => 'Passenger last name is not valid.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertJsonStructure([
+                 'message' => 'Passenger last name is not valid.',
+             ]);
     }
 
     public function testCreatePassengerWithFlightRecordErrorAtDateOfBirth(): void
@@ -441,16 +442,16 @@ class FlyNowPayLaterTest extends TestCase
         $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
                                ->json('flightRecordId');
 
-        $this->newPassengerRecordContext['flight'] = $flightRecordId;
+        $this->newPassengerRecordContext['flight']      = $flightRecordId;
         $this->newPassengerRecordContext['dateOfBirth'] = now('00:00:00')->addWeek()->format('Y-m-d');
 
         $this->post('passenger', $this->newPassengerRecordContext, [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJsonStructure([
-                'message' => 'Passenger date of birth cannot be in future.',
-            ]);
+             ->assertStatus(Response::HTTP_BAD_REQUEST)
+             ->assertJsonStructure([
+                 'message' => 'Passenger date of birth cannot be in future.',
+             ]);
     }
 
     public function testGetPassengersSuccess(): void
@@ -459,121 +460,126 @@ class FlyNowPayLaterTest extends TestCase
             'accessToken' => $this->accessToken,
         ])->json('flightRecordId');
 
-        $this->newPassengerRecordContext['firstName'] = 'Evan';
-        $this->newPassengerRecordContext['firstName'] = 'Lu';
+        $this->newPassengerRecordContext['firstName']   = 'Evan';
+        $this->newPassengerRecordContext['firstName']   = 'Lu';
         $this->newPassengerRecordContext['dateOfBirth'] = '2003-01-01';
-        $this->newPassengerRecordContext['flight'] = $flightRecordId;
+        $this->newPassengerRecordContext['flight']      = $flightRecordId;
 
-        $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext, $this->getAuthenticationHeader());
+        $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext,
+            $this->getAuthenticationHeader());
 
         $this->get('passengers', [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonFragment([
-                [
-                    'passengerRecordId' => $passengerRecordId,
-                    'firstName' => 'Evan',
-                    'lastName' => 'Lu',
-                    'dateOfBirth' => '2003-01-01',
-                    'flights' => [
-                        [
-                            'flightId' => $flightRecordId
-                        ]
-                    ]
-                ]
-            ]);
+             ->assertStatus(Response::HTTP_OK)
+             ->assertJsonFragment([
+                 [
+                     'passengerRecordId' => $passengerRecordId,
+                     'firstName'         => 'Evan',
+                     'lastName'          => 'Lu',
+                     'dateOfBirth'       => '2003-01-01',
+                     'flights'           => [
+                         [
+                             'flightId' => $flightRecordId
+                         ]
+                     ]
+                 ]
+             ]);
     }
 
     public function testGetPassengersErrorAtMissingToken(): void
     {
         $this->get('passengers')
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testGetPassengerWithoutFlightSuccess(): void
     {
-        $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())->json('flightRecordId');
+        $flightRecordId = $this->post('flight', $this->newFlightRecordContext,
+            $this->getAuthenticationHeader())->json('flightRecordId');
 
-        $this->newPassengerRecordContext['firstName'] = 'Evan';
-        $this->newPassengerRecordContext['firstName'] = 'Lu';
+        $this->newPassengerRecordContext['firstName']   = 'Evan';
+        $this->newPassengerRecordContext['firstName']   = 'Lu';
         $this->newPassengerRecordContext['dateOfBirth'] = '2003-01-01';
-        $this->newPassengerRecordContext['flight'] = $flightRecordId;
+        $this->newPassengerRecordContext['flight']      = $flightRecordId;
 
         $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext, [
             'accessToken' => $this->accessToken,
         ]);
 
-        $this->get('passenger/' . $passengerRecordId, [
+        $this->get('passenger/'.$passengerRecordId, [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson([
-                'firstName' => 'Evan',
-                'lastName' => 'Lu',
-                'dateOfBirth' => '2003-01-01',
-                'flights' => []
-            ]);
+             ->assertStatus(Response::HTTP_OK)
+             ->assertExactJson([
+                 'firstName'   => 'Evan',
+                 'lastName'    => 'Lu',
+                 'dateOfBirth' => '2003-01-01',
+                 'flights'     => []
+             ]);
     }
 
     public function testGetPassengerWithoutFlightErrorAtMissingToken(): void
     {
-        $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext, $this->getAuthenticationHeader());
+        $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext,
+            $this->getAuthenticationHeader());
 
-        $this->get('passenger/' . $passengerRecordId)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+        $this->get('passenger/'.$passengerRecordId)
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testGetPassengerWithFlightSuccess(): void
     {
-        $flightRecordId = $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())->json('flightRecordId');
+        $flightRecordId = $this->post('flight', $this->newFlightRecordContext,
+            $this->getAuthenticationHeader())->json('flightRecordId');
 
-        $this->newPassengerRecordContext['firstName'] = 'Evan';
-        $this->newPassengerRecordContext['firstName'] = 'Lu';
+        $this->newPassengerRecordContext['firstName']   = 'Evan';
+        $this->newPassengerRecordContext['firstName']   = 'Lu';
         $this->newPassengerRecordContext['dateOfBirth'] = '2003-01-01';
-        $this->newPassengerRecordContext['flight'] = $flightRecordId;
+        $this->newPassengerRecordContext['flight']      = $flightRecordId;
 
         $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext, [
             'accessToken' => $this->accessToken,
         ]);
 
-        $this->get('passenger/' . $passengerRecordId, [
+        $this->get('passenger/'.$passengerRecordId, [
             'accessToken' => $this->accessToken,
         ])
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson([
-                'firstName' => 'Evan',
-                'lastName' => 'Lu',
-                'dateOfBirth' => '2003-01-01',
-                'flights' => [
-                    [
-                        'flightId' => $flightRecordId
-                    ]
-                ]
-            ]);
+             ->assertStatus(Response::HTTP_OK)
+             ->assertExactJson([
+                 'firstName'   => 'Evan',
+                 'lastName'    => 'Lu',
+                 'dateOfBirth' => '2003-01-01',
+                 'flights'     => [
+                     [
+                         'flightId' => $flightRecordId
+                     ]
+                 ]
+             ]);
     }
 
     public function testGetPassengerWithFlightErrorAtMissingToken(): void
     {
-        $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext, $this->getAuthenticationHeader());
+        $passengerRecordId = $this->post('passenger', $this->newPassengerRecordContext,
+            $this->getAuthenticationHeader());
 
-        $this->get('passenger/' . $passengerRecordId)
-            ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson([
-                'message' => 'You are not authorised to perform this action.',
-            ]);
+        $this->get('passenger/'.$passengerRecordId)
+             ->assertStatus(Response::HTTP_UNAUTHORIZED)
+             ->assertExactJson([
+                 'message' => 'You are not authorised to perform this action.',
+             ]);
     }
 
     public function testGetPassengerWithFlightErrorAtInvalidId(): void
     {
         $this->get('passenger/hello-world', $this->getAuthenticationHeader())
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
 
@@ -582,6 +588,7 @@ class FlyNowPayLaterTest extends TestCase
      *
      * @param  string  $uri
      * @param  array  $headers
+     *
      * @return TestResponse
      */
     public function get($uri, array $headers = [])
@@ -597,6 +604,7 @@ class FlyNowPayLaterTest extends TestCase
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
+     *
      * @return TestResponse
      */
     public function post($uri, array $data = [], array $headers = []): TestResponse
@@ -619,14 +627,14 @@ class FlyNowPayLaterTest extends TestCase
     private function obtainAndSetAccessToken(): void
     {
         $this->accessToken = $this->post('authorise', [
-            'key' => $this->accessKey,
+            'key'    => $this->accessKey,
             'secret' => $this->accessSecret,
         ])->json('accessToken');
     }
 
     private function getAuthenticationHeader($nulled = false): array
     {
-        if (!$nulled) {
+        if ( ! $nulled) {
             $this->obtainAndSetAccessToken();
         }
 
@@ -637,7 +645,7 @@ class FlyNowPayLaterTest extends TestCase
 
     private function addAccessTokenRecord(): void
     {
-        if (!is_null($this->accessToken)) {
+        if ( ! is_null($this->accessToken)) {
             self::$createdAccessTokens[] = $this->accessToken;
         }
     }
