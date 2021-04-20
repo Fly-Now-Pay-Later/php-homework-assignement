@@ -206,17 +206,6 @@ class FlyNowPayLaterTest extends TestCase
              ]);
     }
 
-    public function testCreateFlightErrorAtInvalidFromDate(): void
-    {
-        $this->newFlightRecordContext['from']['date'] = '0000-00-00';
-
-        $this->post('flight', $this->newFlightRecordContext, $this->getAuthenticationHeader())
-             ->assertStatus(Response::HTTP_BAD_REQUEST)
-             ->assertExactJson([
-                 'message' => 'Outbound date is invalid.',
-             ]);
-    }
-
     public function testCreateFlightErrorAtFromDate(): void
     {
         $this->newFlightRecordContext['from']['date'] = '0000-00-00';
